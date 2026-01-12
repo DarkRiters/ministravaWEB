@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    /* ========== APP SHELL / PAGE ========== */
+    .app-shell {
+        @apply min-h-screen font-sans
+        bg-slate-50 text-slate-900
+        dark:bg-[#0b1220] dark:text-slate-100;
+    }
+
+    .app-page {
+        @apply min-h-screen px-6 py-8;
+    }
+
+    .app-container {
+        @apply max-w-6xl mx-auto space-y-6;
+    }
+    .app-nav-item {
+        @apply w-full text-left px-3 py-3 rounded-xl transition;
+    }
+
+    .app-nav-item-active {
+        @apply app-surface border border-slate-300 dark:border-slate-600;
+    }
+
+    .app-nav-item-idle {
+        @apply border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800;
+    }
+    .app-card {
+        @apply rounded-2xl
+        bg-white dark:bg-slate-900
+        border border-slate-200 dark:border-slate-700;
+    }
+
+    .app-overlay {
+        @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+    }
+
+    .app-backdrop {
+        @apply absolute inset-0 bg-black/60;
+    }
+    /* ========== SURFACES / PANELS ========== */
+    .app-surface {
+        @apply rounded-2xl
+        bg-white dark:bg-slate-900
+        border border-slate-200 dark:border-slate-700
+        shadow-sm;
+    }
+
+    .app-surface-hover {
+        @apply transition
+        hover:shadow-md
+        hover:border-slate-300 dark:hover:border-slate-600;
+    }
+
+    /* ========== INPUTS ========== */
+    .app-input {
+        @apply w-full rounded-xl px-3 py-2
+        bg-slate-100 text-slate-900
+        placeholder-slate-500
+        border border-slate-300
+        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+        dark:bg-slate-800 dark:text-slate-100
+        dark:placeholder-slate-400
+        dark:border-slate-600;
+    }
+
+    /* ========== BUTTONS ========== */
+    .app-button {
+        @apply inline-flex items-center justify-center gap-2
+        rounded-xl px-4 py-2 font-medium
+        bg-blue-600 text-white
+        hover:bg-blue-500
+        focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-0
+        disabled:opacity-50 disabled:pointer-events-none
+        transition;
+    }
+
+    .app-button-secondary {
+        @apply inline-flex items-center justify-center gap-2
+        rounded-xl px-4 py-2 font-medium
+        bg-transparent
+        text-slate-700 dark:text-slate-200
+        border border-slate-300 dark:border-slate-600
+        hover:bg-slate-100 dark:hover:bg-slate-800
+        focus:outline-none focus:ring-2 focus:ring-blue-400
+        disabled:opacity-50 disabled:pointer-events-none
+        transition;
+    }
+
+    .app-button-danger {
+        @apply inline-flex items-center justify-center gap-2
+        rounded-xl px-4 py-2 font-medium
+        bg-transparent
+        text-red-500
+        border border-red-500/40
+        hover:bg-red-500/10
+        focus:outline-none focus:ring-2 focus:ring-red-400
+        disabled:opacity-50 disabled:pointer-events-none
+        transition;
+    }
+
+    /* ========== NAVBAR / SIDEBAR ========== */
+    .app-nav {
+        @apply bg-white/80 dark:bg-slate-900/80
+        backdrop-blur
+        border-r border-slate-200 dark:border-slate-700;
+    }
+
+    /* ========== TEXT / LINKS ========== */
+    .app-link {
+        @apply text-blue-600 dark:text-blue-400 hover:underline;
+    }
+
+    /* ========== BADGES / TAGS ========== */
+    .app-badge {
+        @apply inline-flex items-center gap-1
+        rounded-full px-2 py-1 text-xs
+        bg-slate-200 text-slate-700
+        dark:bg-slate-700 dark:text-slate-200;
+    }
+
+    /* ========== DIVIDERS ========== */
+    .app-divider {
+        @apply border-t border-slate-200 dark:border-slate-700;
+    }
+
+    /* ========== LOGO ========== */
+    .app-logo {
+        @apply text-blue-600 dark:text-blue-400 font-semibold tracking-wide;
+    }
+}
