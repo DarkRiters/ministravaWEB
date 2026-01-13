@@ -28,6 +28,7 @@ function nowIso(): string {
 }
 
 function normalizeUserDto(input: any): UserDTO {
+    // backend czasem daje { message, data }, czasem sam obiekt
     const u = input?.data ?? input;
 
     const createdAt = u?.created_at ?? nowIso();
@@ -35,10 +36,21 @@ function normalizeUserDto(input: any): UserDTO {
 
     return {
         id: Number(u.id),
-        first_name: String(u.name ?? ""),
         email: String(u.email ?? ""),
         email_verified_at: u.email_verified_at ?? null,
+
+        first_name: u.first_name ?? null,
+        last_name: u.last_name ?? null,
+
+        birth_date: u.birth_date ?? null,
+        gender: u.gender ?? null,
+        height: u.height ?? null,
+        weight: u.weight ?? null,
+        avatar: u.avatar ?? null,
+
         is_admin: Boolean(u.is_admin ?? false),
+        roles: Array.isArray(u.roles) ? u.roles : undefined,
+
         created_at: String(createdAt),
         updated_at: String(updatedAt),
     };
@@ -49,7 +61,21 @@ export class AuthService {
         if (useMock()) {
             const now = nowIso();
             return {
-                user: { id: 1, first_name: email.split("@")[0] || "User", email, created_at: now, updated_at: now },
+                user: {
+                    id: 1,
+                    email,
+                    email_verified_at: null,
+                    first_name: (email.split("@")[0] || "User"),
+                    last_name: null,
+                    birth_date: null,
+                    gender: null,
+                    height: null,
+                    weight: null,
+                    avatar: null,
+                    is_admin: false,
+                    created_at: now,
+                    updated_at: now,
+                },
                 token: "fake-token",
             };
         }
@@ -63,7 +89,21 @@ export class AuthService {
             const now = nowIso();
             return {
                 message: "Konto utworzone (mock). Sprawdź email i kliknij link weryfikacyjny.",
-                user: { id: 1, first_name: name, email, created_at: now, updated_at: now },
+                user: {
+                    id: 1,
+                    email,
+                    email_verified_at: null,
+                    first_name: name,
+                    last_name: null,
+                    birth_date: null,
+                    gender: null,
+                    height: null,
+                    weight: null,
+                    avatar: null,
+                    is_admin: false,
+                    created_at: now,
+                    updated_at: now,
+                },
             };
         }
 
