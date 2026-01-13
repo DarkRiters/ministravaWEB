@@ -187,11 +187,6 @@
                   <option value="other">other</option>
                 </select>
               </div>
-
-              <div>
-                <label class="text-xs opacity-70">{{ t("admin.fields.avatar") }}</label>
-                <input v-model="editForm.avatar" class="mt-1 app-input" placeholder="url / path" />
-              </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
