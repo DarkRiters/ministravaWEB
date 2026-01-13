@@ -1,9 +1,22 @@
 export type UserDTO = {
     id: number;
-    name: string;
+
     email: string;
     email_verified_at?: string | null;
-    is_admin?: boolean;
+
+    first_name: string | null;
+    last_name: string | null;
+
+    birth_date?: string | null;
+    gender?: string | null;
+    height?: number | null;
+    weight?: number | null;
+
+    avatar?: string | null;
+
     created_at: string;
     updated_at: string;
+
+    is_admin?: boolean;
+    roles?: string[];
 };

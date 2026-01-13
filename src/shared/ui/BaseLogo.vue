@@ -1,6 +1,6 @@
 <template>
   <div class="app-logo font-semibold tracking-wide text-2xl">
-    <RouterLink to="/dashboard">
+    <RouterLink to="/">
       SILEX
     </RouterLink>
   </div>

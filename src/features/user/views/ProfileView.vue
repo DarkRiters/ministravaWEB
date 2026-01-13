@@ -32,11 +32,6 @@
 
         <div class="space-y-3">
           <div>
-            <label class="text-xs opacity-70">{{ t("auth.fields.name") }}</label>
-            <input v-model="profileForm.name" class="mt-1 app-input" type="text" />
-          </div>
-
-          <div>
             <label class="text-xs opacity-70">{{ t("auth.fields.email") }}</label>
             <input v-model="profileForm.email" class="mt-1 app-input" type="email" />
           </div>

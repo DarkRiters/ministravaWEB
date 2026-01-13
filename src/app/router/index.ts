@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
-import DashboardView from "../views/DashboardView.vue";
 import LoginView from "../../features/auth/views/LoginView.vue";
 import RegisterView from "../../features/auth/views/RegisterView.vue";
 import ForgotPasswordView from "../../features/auth/views/ForgotPasswordView.vue";
@@ -11,16 +10,13 @@ import { useAuthStore } from "../../features/auth/stores/authStore";
 type AppRouteMeta = {
     requiresAuth?: boolean;
     guestOnly?: boolean;
-    requiresAdmin?: boolean; // ✅
+    requiresAdmin?: boolean;
 };
 
 const routes: RouteRecordRaw[] = [
-    {
-        path: "/",
-        name: "dashboard",
-        component: DashboardView,
-        meta: { requiresAuth: true } satisfies AppRouteMeta,
-    },
+    // ROOT -> admin by default (bo projekt to panel admina)
+    { path: "/", redirect: "/admin/stats" },
+
     {
         path: "/reset-password",
         name: "reset-password",
@@ -52,30 +48,25 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true } satisfies AppRouteMeta,
     },
     {
-        path: "/trainings",
-        name: "trainings",
-        component: () => import("../../features/training/views/TrainingView.vue"),
-        meta: { requiresAuth: true } satisfies AppRouteMeta,
+        path: "/admin/stats",
+        name: "admin-stats",
+        component: () => import("../../features/admin/views/AdminStatsView.vue"),
+        meta: { requiresAuth: true, requiresAdmin: true } satisfies AppRouteMeta,
     },
-    {
-        path: "/trainings/stats",
-        name: "trainings-stats",
-        component: () => import("../../features/training/views/TrainingStatsView.vue"),
-        meta: { requiresAuth: true } satisfies AppRouteMeta,
-    },
-
-    // ✅ ADMIN
     {
         path: "/admin/users",
         name: "admin-users",
         component: () => import("../../features/admin/views/AdminUsersView.vue"),
         meta: { requiresAuth: true, requiresAdmin: true } satisfies AppRouteMeta,
     },
-
     {
-        path: "/:pathMatch(.*)*",
-        redirect: "/",
+        path: "/admin/activities",
+        name: "admin-activities",
+        component: () => import("../../features/admin/views/AdminActivitiesView.vue"),
+        meta: { requiresAuth: true, requiresAdmin: true } satisfies AppRouteMeta,
     },
+
+    { path: "/:pathMatch(.*)*", redirect: "/admin/users" },
 ];
 
 export const router = createRouter({
@@ -88,17 +79,16 @@ function userIsAdmin(currentUser: unknown): boolean {
     return u?.is_admin === true || (Array.isArray(u?.roles) && u.roles.includes("admin"));
 }
 
-// Guard
 router.beforeEach(async (to) => {
     const auth = useAuthStore();
-
     const meta = (to.meta ?? {}) as AppRouteMeta;
+
     const requiresAuth = Boolean(meta.requiresAuth);
     const guestOnly = Boolean(meta.guestOnly);
     const requiresAdmin = Boolean(meta.requiresAdmin);
 
     if (requiresAuth && !auth.isLoggedIn) return { name: "login" };
-    if (guestOnly && auth.isLoggedIn) return { name: "dashboard" };
+    if (guestOnly && auth.isLoggedIn) return { name: "admin-users" };
 
     if (requiresAuth && auth.isLoggedIn && !auth.currentUser) {
         try {
@@ -114,10 +104,10 @@ router.beforeEach(async (to) => {
         try {
             const { AdminService } = await import("../../features/admin/services/AdminService");
             const ok = await AdminService.canAccessAdmin();
-            if (!ok) return { name: "dashboard" };
+            if (!ok) return { name: "login" };
             return true;
         } catch {
-            return { name: "dashboard" };
+            return { name: "login" };
         }
     }
 

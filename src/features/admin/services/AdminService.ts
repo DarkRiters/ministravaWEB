@@ -13,18 +13,26 @@ type ResourceCollection<T> = { data: T[] };
 type LaravelPaginator<T> = Partial<Paginated<T>> & { data?: T[] };
 
 export type UpdateUserPayload = {
-    name?: string;
+    first_name?: string | null;
+    last_name?: string | null;
     email?: string;
+
+    birth_date?: string | null;
+    gender?: string | null;
+    height?: number | null;
+    weight?: number | null;
+    avatar?: string | null;
 };
 
 export type CreateUserPayload = {
-    name: string;
+    first_name: string;
+    last_name?: string | null;
     email: string;
     password: string;
     password_confirmation: string;
 };
 
-function normalizePaginated<T>(
+function normalizeUsersResponse<T>(
     res: ResourceCollection<T> | LaravelPaginator<T> | T[] | unknown,
     fallbackPage = 1,
     fallbackPerPage = 50
@@ -73,22 +81,54 @@ function normalizePaginated<T>(
     };
 }
 
+function isEmpty(v: unknown): boolean {
+    return v === null || v === undefined || (typeof v === "string" && v.trim() === "");
+}
+
+function normalizeEmail(v: unknown): string {
+    return String(v ?? "").trim().toLowerCase();
+}
+
+function buildSafeUpdatePayload(payload: UpdateUserPayload, currentUser?: UserDTO): UpdateUserPayload {
+    const out: UpdateUserPayload = { ...payload };
+
+    // normalizacja pustych stringów
+    if (out.first_name === "") out.first_name = null;
+    if (out.last_name === "") out.last_name = null;
+    if (out.birth_date === "") out.birth_date = null;
+    if (out.gender === "") out.gender = null;
+    if (out.avatar === "") out.avatar = null;
+
+    if (isEmpty(out.email)) delete out.email;
+
+    if (currentUser && out.email && normalizeEmail(out.email) === normalizeEmail(currentUser.email)) {
+        delete out.email;
+    }
+
+    return out;
+}
 
 export class AdminService {
     static async listUsers(page = 1, perPage = 50): Promise<Paginated<UserDTO>> {
         const { data } = await api.get<ResourceCollection<UserDTO> | LaravelPaginator<UserDTO> | UserDTO[]>(
             "/admin/users",
-            { params: { page, per_page: perPage }, headers: { Accept: "application/json" } }
+            { headers: { Accept: "application/json" } }
         );
 
-        return normalizePaginated<UserDTO>(data, page, perPage);
+        return normalizeUsersResponse<UserDTO>(data, page, perPage);
     }
 
+    static async updateUser(id: number, payload: UpdateUserPayload, currentUser?: UserDTO): Promise<UserDTO> {
+        const safe = buildSafeUpdatePayload(payload, currentUser);
 
-    static async updateUser(id: number, payload: UpdateUserPayload): Promise<UserDTO> {
-        const { data } = await api.put<UserDTO>(`/admin/users/${id}`, payload, {
+        console.log("[ADMIN] updateUser payload ->", { id, safe });
+
+        const { data } = await api.put<UserDTO>(`/admin/users/${id}`, safe, {
             headers: { Accept: "application/json" },
         });
+
+        console.log("[ADMIN] updateUser response <-", data);
+
         return data;
     }
 
@@ -105,7 +145,7 @@ export class AdminService {
 
     static async canAccessAdmin(): Promise<boolean> {
         try {
-            await this.listUsers(1, 1);
+            await api.get("/admin/users", { headers: { Accept: "application/json" } });
             return true;
         } catch {
             return false;
@@ -116,26 +156,22 @@ export class AdminService {
 export function extractLaravelError(e: unknown, fallback: string): string {
     const err = e as any;
 
-    const msg: unknown = err?.response?.data?.message;
-    if (typeof msg === "string" && msg.trim().length) return msg;
+    const direct = err?.message;
+    if (typeof direct === "string" && direct.trim()) return direct;
 
-    const errors: unknown = err?.response?.data?.errors;
+    const msg = err?.response?.data?.message;
+    if (typeof msg === "string" && msg.trim()) return msg;
 
+    const errors = err?.response?.data?.errors;
     if (errors && typeof errors === "object") {
         const rec = errors as Record<string, unknown>;
-        const keys = Object.keys(rec);
-
-        if (keys.length > 0) {
-            const firstKey = keys[0] as string;
-            const firstVal = rec[firstKey];
-
-            if (Array.isArray(firstVal) && firstVal[0]) return String(firstVal[0]);
-            if (typeof firstVal === "string") return firstVal;
+        const firstKey = Object.keys(rec)[0];
+        if (firstKey) {
+            const v = rec[firstKey];
+            if (Array.isArray(v) && v[0]) return String(v[0]);
+            if (typeof v === "string") return v;
         }
     }
-
-    const plain: unknown = err?.message;
-    if (typeof plain === "string" && plain.trim().length) return plain;
 
     return fallback;
 }

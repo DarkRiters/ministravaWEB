@@ -20,9 +20,9 @@
           <div class="grid grid-cols-1 gap-2 px-1">
             <RouterLink
                 v-if="canSeeAdmin"
-                to="/admin"
+                to="/admin/stats"
                 class="app-card p-3 text-left hover:opacity-90 transition"
-                :class="isActive('/admin') ? 'ring-2 ring-blue-500/60' : ''"
+                :class="isActive('/admin/stats') ? 'ring-2 ring-blue-500/60' : ''"
             >
               <div class="font-medium flex items-center gap-2">
                 <span class="shrink-0">📊</span>
@@ -109,12 +109,6 @@
                     {{ t("settings.profile.open") }}
                   </RouterLink>
                 </div>
-
-                <div v-if="canSeeAdmin" class="flex items-center justify-between">
-                  <RouterLink class="app-link" to="/admin/users">
-                    {{ t("admin.panel.open") ?? "Panel administratora" }}
-                  </RouterLink>
-                </div>
               </div>
             </BaseDropdown>
           </div>
@@ -171,7 +165,7 @@ const { locale, setLocale } = useLocale();
 const { t } = useI18n();
 
 const userName = computed(() =>
-    auth.currentUser ? auth.currentUser.name : t("userPanel.greeting.noName")
+    auth.currentUser ? auth.currentUser.email : t("userPanel.greeting.noName")
 );
 
 const canSeeAdmin = ref(false);

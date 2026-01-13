@@ -71,7 +71,16 @@ export const useAuthStore = defineStore("auth", () => {
     }
 
     async function refreshMe() {
-        return;
+        const token = getAuthToken();
+        if (!token) return;
+
+        try {
+            const dto = await AuthService.profile();
+            setUser(dto);
+        } catch (err) {
+            if (isUnauthorized(err)) clearSession();
+            throw err;
+        }
     }
 
     async function updateProfile(payload: { name?: string; email?: string }) {

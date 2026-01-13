@@ -3,7 +3,6 @@ import { computed, ref } from "vue";
 import type { UserDTO } from "../../user/domain/UserDTO";
 import {
     AdminService,
-    type Paginated,
     type UpdateUserPayload,
     type CreateUserPayload,
     extractLaravelError,
@@ -22,17 +21,17 @@ export const useAdminStore = defineStore("admin", () => {
     const hasPrev = computed(() => page.value > 1);
     const hasNext = computed(() => page.value < lastPage.value);
 
-    async function fetchUsers(p = page.value) {
+    async function fetchUsers() {
         error.value = null;
         isLoading.value = true;
 
         try {
-            const res: Paginated<UserDTO> = await AdminService.listUsers(p, perPage.value);
-
+            const res = await AdminService.listUsers(1, perPage.value);
             users.value = Array.isArray(res.data) ? res.data : [];
-            page.value = Number(res.current_page ?? p);
-            lastPage.value = Number(res.last_page ?? 1);
-            total.value = Number(res.total ?? users.value.length);
+            total.value = users.value.length;
+
+            page.value = 1;
+            lastPage.value = 1;
         } catch (e: unknown) {
             error.value = extractLaravelError(e, "Could not load users.");
             users.value = [];
@@ -46,10 +45,9 @@ export const useAdminStore = defineStore("admin", () => {
 
     async function deleteUser(id: number) {
         error.value = null;
-
         try {
             await AdminService.deleteUser(id);
-            await fetchUsers(page.value);
+            await fetchUsers();
         } catch (e: unknown) {
             error.value = extractLaravelError(e, "Could not delete user.");
             throw e;
@@ -58,10 +56,10 @@ export const useAdminStore = defineStore("admin", () => {
 
     async function updateUser(id: number, payload: UpdateUserPayload) {
         error.value = null;
-
         try {
-            await AdminService.updateUser(id, payload);
-            await fetchUsers(page.value);
+            const currentUser = users.value.find((u) => u.id === id);
+            await AdminService.updateUser(id, payload, currentUser);
+            await fetchUsers();
         } catch (e: unknown) {
             error.value = extractLaravelError(e, "Could not update user.");
             throw e;
@@ -70,10 +68,9 @@ export const useAdminStore = defineStore("admin", () => {
 
     async function createUser(payload: CreateUserPayload) {
         error.value = null;
-
         try {
             await AdminService.createUser(payload);
-            await fetchUsers(1);
+            await fetchUsers();
         } catch (e: unknown) {
             error.value = extractLaravelError(e, "Could not create user.");
             throw e;

@@ -35,7 +35,7 @@ function normalizeUserDto(input: any): UserDTO {
 
     return {
         id: Number(u.id),
-        name: String(u.name ?? ""),
+        first_name: String(u.name ?? ""),
         email: String(u.email ?? ""),
         email_verified_at: u.email_verified_at ?? null,
         is_admin: Boolean(u.is_admin ?? false),
@@ -49,7 +49,7 @@ export class AuthService {
         if (useMock()) {
             const now = nowIso();
             return {
-                user: { id: 1, name: email.split("@")[0] || "User", email, created_at: now, updated_at: now },
+                user: { id: 1, first_name: email.split("@")[0] || "User", email, created_at: now, updated_at: now },
                 token: "fake-token",
             };
         }
@@ -63,7 +63,7 @@ export class AuthService {
             const now = nowIso();
             return {
                 message: "Konto utworzone (mock). Sprawdź email i kliknij link weryfikacyjny.",
-                user: { id: 1, name, email, created_at: now, updated_at: now },
+                user: { id: 1, first_name: name, email, created_at: now, updated_at: now },
             };
         }
 
@@ -125,5 +125,9 @@ export class AuthService {
     static async logout(): Promise<void> {
         if (useMock()) return;
         await api.post("/logout");
+    }
+    static async profile(): Promise<UserDTO> {
+        const { data } = await api.get("/profile", { headers: { Accept: "application/json" } });
+        return normalizeUserDto(data);
     }
 }

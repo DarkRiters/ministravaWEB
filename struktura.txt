@@ -13,10 +13,8 @@
 │   ├── app
 │   │   ├── App.vue
 │   │   ├── main.ts
-│   │   ├── router
-│   │   │   └── index.ts
-│   │   └── views
-│   │       └── DashboardView.vue
+│   │   └── router
+│   │       └── index.ts
 │   ├── features
 │   │   ├── admin
 │   │   │   ├── services
@@ -25,6 +23,8 @@
 │   │   │   ├── stores
 │   │   │   │   └── adminStore.ts
 │   │   │   └── views
+│   │   │       ├── AdminActivitiesView.vue
+│   │   │       ├── AdminDashboardView.vue
 │   │   │       └── AdminUsersView.vue
 │   │   ├── auth
 │   │   │   ├── services
@@ -42,24 +42,6 @@
 │   │   │       ├── LoginView.vue
 │   │   │       ├── RegisterView.vue
 │   │   │       └── ResetPasswordView.vue
-│   │   ├── training
-│   │   │   ├── domain
-│   │   │   │   ├── Training.ts
-│   │   │   │   ├── TrainingDTO.ts
-│   │   │   │   ├── TrainingFactory.ts
-│   │   │   │   ├── TrainingStatsDTO.ts
-│   │   │   │   └── TrainingType.ts
-│   │   │   ├── services
-│   │   │   │   ├── TrainingService.ts
-│   │   │   │   └── TrainingStatsService.ts
-│   │   │   ├── stores
-│   │   │   │   ├── trainingStatsStore.ts
-│   │   │   │   └── trainingStore.ts
-│   │   │   ├── utils
-│   │   │   │   └── trainingTypeMeta.ts
-│   │   │   └── views
-│   │   │       ├── TrainingStatsView.vue
-│   │   │       └── TrainingView.vue
 │   │   └── user
 │   │       ├── domain
 │   │       │   ├── User.ts
@@ -99,4 +81,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-34 directories, 66 files
+27 directories, 55 files

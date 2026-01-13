@@ -1,6 +1,84 @@
 export const messages = {
     pl: {
         // =====================
+        // COMMON – ACTIONS / STATES / CONFIRMS (NEW)
+        // =====================
+        "common.actions.refresh": "Odśwież",
+        "common.actions.resetFilters": "Reset filtrów",
+        "common.actions.delete": "Usuń",
+        "common.actions.close": "Zamknij",
+        "common.actions.back": "Wróć",
+
+        "common.states.loading": "Ładowanie...",
+        "common.states.noResults": "Brak wyników.",
+        "common.states.noData": "Brak danych.",
+
+        "common.confirm.deleteActivity": "Usunąć aktywność?",
+        "common.confirm.deleteUser": "Usunąć użytkownika?",
+
+        // =====================
+        // ADMIN – ACTIVITIES (NEW)
+        // =====================
+        "admin.activities.title": "Aktywności",
+        "admin.activities.subtitle": "Filtry działają na całej wczytanej liście.",
+        "admin.activities.loaded": "Wczytano: {loaded}",
+        "admin.activities.filtered": "Wyniki po filtrach: {filtered}",
+
+        "admin.activities.filters.searchPlaceholder": "Szukaj (nazwa, email, notatka...)",
+        "admin.activities.filters.userAll": "Użytkownik: wszyscy",
+        "admin.activities.filters.typeAll": "Typ: wszystkie",
+        "admin.activities.filters.dateFrom": "Data od",
+        "admin.activities.filters.dateTo": "Data do",
+        "admin.activities.filters.distanceMin": "Dystans min",
+        "admin.activities.filters.distanceMax": "Dystans max",
+        "admin.activities.filters.timeMin": "Czas min",
+        "admin.activities.filters.timeMax": "Czas max",
+
+        "admin.activities.table.id": "ID",
+        "admin.activities.table.user": "Użytkownik",
+        "admin.activities.table.name": "Nazwa",
+        "admin.activities.table.type": "Typ",
+        "admin.activities.table.distance": "Dystans",
+        "admin.activities.table.time": "Czas",
+        "admin.activities.table.date": "Data",
+        "admin.activities.table.actions": "Akcje",
+
+        "admin.activities.errors.fetch": "Nie udało się pobrać aktywności.",
+        "admin.activities.errors.delete": "Nie udało się usunąć.",
+
+        // =====================
+        // ADMIN – STATS (NEW)
+        // =====================
+        "admin.stats.title": "Statystyki globalne",
+        "admin.stats.subtitle": "Podsumowanie całej aplikacji.",
+        "admin.stats.cards.users": "Użytkownicy",
+        "admin.stats.cards.activities": "Aktywności",
+        "admin.stats.cards.totalDistance": "Łączny dystans",
+        "admin.stats.cards.totalTime": "Łączny czas",
+        "admin.stats.rawValue": "surowo: {value}",
+        "admin.stats.errors.fetch": "Nie udało się pobrać statystyk.",
+
+        // =====================
+        // ADMIN – USERS (EXTENSION / CLEANUP)
+        // =====================
+        "admin.users.total": "{count} użytkowników",
+        "admin.users.empty": "Brak danych",
+
+        // Field labels (NEW)
+        "admin.fields.first_name": "Imię",
+        "admin.fields.last_name": "Nazwisko",
+        "admin.fields.birth_date": "Data urodzenia",
+        "admin.fields.gender": "Płeć",
+        "admin.fields.height": "Wzrost",
+        "admin.fields.weight": "Waga",
+        "admin.fields.avatar": "Avatar",
+        "admin.fields.created_at": "Utworzono",
+        "admin.fields.updated_at": "Zaktualizowano",
+
+        // Notes (NEW)
+        "admin.users.emailNoChangeHint":
+            "Jeśli email zostaje taki sam, nie wysyłamy go do API (żeby nie dostać błędu unique).",
+        // =====================
         // ADMIN – NAV (NEW)
         // =====================
         "admin.panel.title": "Panel administratora",
@@ -356,6 +434,84 @@ export const messages = {
     },
 
     en: {
+        // =====================
+        // COMMON – ACTIONS / STATES / CONFIRMS (NEW)
+        // =====================
+        "common.actions.refresh": "Refresh",
+        "common.actions.resetFilters": "Reset filters",
+        "common.actions.delete": "Delete",
+        "common.actions.close": "Close",
+        "common.actions.back": "Back",
+
+        "common.states.loading": "Loading...",
+        "common.states.noResults": "No results.",
+        "common.states.noData": "No data.",
+
+        "common.confirm.deleteActivity": "Delete activity?",
+        "common.confirm.deleteUser": "Delete user?",
+
+        // =====================
+        // ADMIN – ACTIVITIES (NEW)
+        // =====================
+        "admin.activities.title": "Activities",
+        "admin.activities.subtitle": "Filters apply to the whole loaded list.",
+        "admin.activities.loaded": "Loaded: {loaded}",
+        "admin.activities.filtered": "Results after filters: {filtered}",
+
+        "admin.activities.filters.searchPlaceholder": "Search (name, email, note...)",
+        "admin.activities.filters.userAll": "User: all",
+        "admin.activities.filters.typeAll": "Type: all",
+        "admin.activities.filters.dateFrom": "Date from",
+        "admin.activities.filters.dateTo": "Date to",
+        "admin.activities.filters.distanceMin": "Min distance",
+        "admin.activities.filters.distanceMax": "Max distance",
+        "admin.activities.filters.timeMin": "Min time",
+        "admin.activities.filters.timeMax": "Max time",
+
+        "admin.activities.table.id": "ID",
+        "admin.activities.table.user": "User",
+        "admin.activities.table.name": "Name",
+        "admin.activities.table.type": "Type",
+        "admin.activities.table.distance": "Distance",
+        "admin.activities.table.time": "Time",
+        "admin.activities.table.date": "Date",
+        "admin.activities.table.actions": "Actions",
+
+        "admin.activities.errors.fetch": "Could not load activities.",
+        "admin.activities.errors.delete": "Could not delete.",
+
+        // =====================
+        // ADMIN – STATS (NEW)
+        // =====================
+        "admin.stats.title": "Global statistics",
+        "admin.stats.subtitle": "Application-wide summary.",
+        "admin.stats.cards.users": "Users",
+        "admin.stats.cards.activities": "Activities",
+        "admin.stats.cards.totalDistance": "Total distance",
+        "admin.stats.cards.totalTime": "Total time",
+        "admin.stats.rawValue": "raw: {value}",
+        "admin.stats.errors.fetch": "Could not load stats.",
+
+        // =====================
+        // ADMIN – USERS (EXTENSION / CLEANUP)
+        // =====================
+        "admin.users.total": "{count} users",
+        "admin.users.empty": "No data",
+
+        // Field labels (NEW)
+        "admin.fields.first_name": "First name",
+        "admin.fields.last_name": "Last name",
+        "admin.fields.birth_date": "Birth date",
+        "admin.fields.gender": "Gender",
+        "admin.fields.height": "Height",
+        "admin.fields.weight": "Weight",
+        "admin.fields.avatar": "Avatar",
+        "admin.fields.created_at": "Created at",
+        "admin.fields.updated_at": "Updated at",
+
+        // Notes (NEW)
+        "admin.users.emailNoChangeHint":
+            "If the email stays the same, we do not send it to the API (to avoid unique constraint errors).",
         // =====================
         // ADMIN – NAV (NEW)
         // =====================
