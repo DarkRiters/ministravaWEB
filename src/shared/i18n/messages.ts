@@ -1,6 +1,21 @@
 export const messages = {
     pl: {
         // =====================
+        // ADMIN – NAV (NEW)
+        // =====================
+        "admin.panel.title": "Panel administratora",
+        "admin.panel.open": "Panel administratora",
+        "admin.panel.noAccess": "Brak dostępu do panelu administratora.",
+
+        "admin.nav.dashboard": "Statystyki",
+        "admin.nav.dashboardDesc": "Globalne statystyki systemu",
+
+        "admin.nav.users": "Użytkownicy",
+        "admin.nav.usersDesc": "Lista, edycja, usuwanie",
+
+        "admin.nav.activities": "Aktywności",
+        "admin.nav.activitiesDesc": "Filtry, wyszukiwanie, usuwanie",
+        // =====================
         // SETTINGS - THEME
         // =====================
         "settings.theme.title": "Motyw",
@@ -290,7 +305,6 @@ export const messages = {
         // =====================
         // ADMIN
         // =====================
-        "admin.panel.open": "Panel administratora",
         "admin.users.title": "Użytkownicy",
         "admin.users.id": "ID",
         "admin.users.verified": "Zweryfikowany",
@@ -342,6 +356,22 @@ export const messages = {
     },
 
     en: {
+        // =====================
+        // ADMIN – NAV (NEW)
+        // =====================
+        "admin.panel.title": "Admin panel",
+        "admin.panel.open": "Admin panel",
+        "admin.panel.noAccess": "No access to the admin panel.",
+
+        "admin.nav.dashboard": "Statistics",
+        "admin.nav.dashboardDesc": "Global system statistics",
+
+        "admin.nav.users": "Users",
+        "admin.nav.usersDesc": "List, edit, delete",
+
+        "admin.nav.activities": "Activities",
+        "admin.nav.activitiesDesc": "Filters, search, delete",
+
         // =====================
         // SETTINGS - THEME
         // =====================
@@ -635,7 +665,6 @@ export const messages = {
         // =====================
         // ADMIN
         // =====================
-        "admin.panel.open": "Admin panel",
         "admin.users.title": "Users",
         "admin.users.id": "ID",
         "admin.users.verified": "Verified",

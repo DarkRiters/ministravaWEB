@@ -1,0 +1,102 @@
+.
+├── Dockerfile
+├── Makefile
+├── README.md
+├── docker-compose.dev.yml
+├── docker-compose.prod.yml
+├── eslint.config.ts
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.cjs
+├── src
+│   ├── app
+│   │   ├── App.vue
+│   │   ├── main.ts
+│   │   ├── router
+│   │   │   └── index.ts
+│   │   └── views
+│   │       └── DashboardView.vue
+│   ├── features
+│   │   ├── admin
+│   │   │   ├── services
+│   │   │   │   ├── AdminService.test.ts
+│   │   │   │   └── AdminService.ts
+│   │   │   ├── stores
+│   │   │   │   └── adminStore.ts
+│   │   │   └── views
+│   │   │       └── AdminUsersView.vue
+│   │   ├── auth
+│   │   │   ├── services
+│   │   │   │   ├── AuthService.test.ts
+│   │   │   │   └── AuthService.ts
+│   │   │   ├── stores
+│   │   │   │   └── authStore.ts
+│   │   │   ├── ui
+│   │   │   │   └── AuthForm.vue
+│   │   │   ├── utils
+│   │   │   │   ├── validators.test.ts
+│   │   │   │   └── validators.ts
+│   │   │   └── views
+│   │   │       ├── ForgotPasswordView.vue
+│   │   │       ├── LoginView.vue
+│   │   │       ├── RegisterView.vue
+│   │   │       └── ResetPasswordView.vue
+│   │   ├── training
+│   │   │   ├── domain
+│   │   │   │   ├── Training.ts
+│   │   │   │   ├── TrainingDTO.ts
+│   │   │   │   ├── TrainingFactory.ts
+│   │   │   │   ├── TrainingStatsDTO.ts
+│   │   │   │   └── TrainingType.ts
+│   │   │   ├── services
+│   │   │   │   ├── TrainingService.ts
+│   │   │   │   └── TrainingStatsService.ts
+│   │   │   ├── stores
+│   │   │   │   ├── trainingStatsStore.ts
+│   │   │   │   └── trainingStore.ts
+│   │   │   ├── utils
+│   │   │   │   └── trainingTypeMeta.ts
+│   │   │   └── views
+│   │   │       ├── TrainingStatsView.vue
+│   │   │       └── TrainingView.vue
+│   │   └── user
+│   │       ├── domain
+│   │       │   ├── User.ts
+│   │       │   ├── UserDTO.ts
+│   │       │   ├── UserFactory.ts
+│   │       │   └── UserRole.ts
+│   │       └── views
+│   │           └── ProfileView.vue
+│   └── shared
+│       ├── composables
+│       │   ├── useI18n.ts
+│       │   ├── useLocale.ts
+│       │   └── useTheme.ts
+│       ├── i18n
+│       │   └── messages.ts
+│       ├── layout
+│       │   ├── AuthNavbar.vue
+│       │   └── SideNavbar.vue
+│       ├── services
+│       │   └── http
+│       │       └── api.ts
+│       ├── stores
+│       │   ├── uiStore.ts
+│       │   └── useAsyncAction.ts
+│       ├── styles
+│       │   └── main.css
+│       └── ui
+│           ├── BaseButton.vue
+│           ├── BaseDropdown.vue
+│           ├── BaseInput.vue
+│           └── BaseLogo.vue
+├── struktura.txt
+├── tailwind.config.cjs
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── vitest.config.ts
+
+34 directories, 66 files

@@ -1,4 +1,4 @@
-# Projekt FrontEndu: "Silex"
+# Projekt FrontEndu: "ministravaWEB"
 
 ## Stack technologiczny:
 ### Vue 3 

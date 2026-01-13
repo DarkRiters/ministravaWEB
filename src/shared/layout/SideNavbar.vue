@@ -9,51 +9,64 @@
         <BaseLogo />
       </div>
 
-      <!-- List -->
-      <div class="flex-1 overflow-y-auto py-2 px-2 space-y-2">
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto py-2 px-2 space-y-3">
         <div class="px-2 text-xs opacity-60">
-          {{ t("training.title") }}
+          {{ t("admin.panel.title") ?? "Panel administratora" }}
         </div>
 
         <template v-if="auth.isLoggedIn">
-          <!-- Create -->
-          <button
-              type="button"
-              class="app-button w-full justify-center"
-              @click="goCreate"
-          >
-            + {{ t("training.addNew") }}
-          </button>
+          <!-- Admin tiles -->
+          <div class="grid grid-cols-1 gap-2 px-1">
+            <RouterLink
+                v-if="canSeeAdmin"
+                to="/admin"
+                class="app-card p-3 text-left hover:opacity-90 transition"
+                :class="isActive('/admin') ? 'ring-2 ring-blue-500/60' : ''"
+            >
+              <div class="font-medium flex items-center gap-2">
+                <span class="shrink-0">📊</span>
+                <span>{{ t("admin.nav.dashboard") ?? "Statystyki" }}</span>
+              </div>
+              <div class="text-xs opacity-70 mt-1">
+                {{ t("admin.nav.dashboardDesc") ?? "Globalne statystyki systemu" }}
+              </div>
+            </RouterLink>
 
-          <!-- Items -->
-          <button
-              v-for="tr in trainingStore.items"
-              :key="tr.id"
-              type="button"
-              class="app-nav-item"
-              :class="tr.id === trainingStore.selectedId ? 'app-nav-item-active' : 'app-nav-item-idle'"
-              @click="openTraining(tr.id)"
-          >
-            <div class="font-medium truncate flex items-center gap-2">
-              <span class="shrink-0">{{ trainingMeta(tr.type).emoji }}</span>
-              <span class="truncate">{{ tr.name }}</span>
-            </div>
+            <RouterLink
+                v-if="canSeeAdmin"
+                to="/admin/users"
+                class="app-card p-3 text-left hover:opacity-90 transition"
+                :class="isActive('/admin/users') ? 'ring-2 ring-blue-500/60' : ''"
+            >
+              <div class="font-medium flex items-center gap-2">
+                <span class="shrink-0">👤</span>
+                <span>{{ t("admin.nav.users") ?? "Użytkownicy" }}</span>
+              </div>
+              <div class="text-xs opacity-70 mt-1">
+                {{ t("admin.nav.usersDesc") ?? "Lista, edycja, usuwanie" }}
+              </div>
+            </RouterLink>
 
-            <div class="text-xs opacity-70 truncate">
-              {{ t(trainingMeta(tr.type).i18nKey) }}
-            </div>
-          </button>
-
-          <div v-if="trainingStore.isLoading" class="text-xs opacity-70 px-2">
-            {{ t("common.loading") }}
+            <RouterLink
+                v-if="canSeeAdmin"
+                to="/admin/activities"
+                class="app-card p-3 text-left hover:opacity-90 transition"
+                :class="isActive('/admin/activities') ? 'ring-2 ring-blue-500/60' : ''"
+            >
+              <div class="font-medium flex items-center gap-2">
+                <span class="shrink-0">🧭</span>
+                <span>{{ t("admin.nav.activities") ?? "Aktywności" }}</span>
+              </div>
+              <div class="text-xs opacity-70 mt-1">
+                {{ t("admin.nav.activitiesDesc") ?? "Filtry, wyszukiwanie, usuwanie" }}
+              </div>
+            </RouterLink>
           </div>
 
-          <div
-              v-if="trainingStore.error"
-              class="app-card p-3 border border-red-500/30 bg-red-500/5 text-xs text-slate-900 dark:text-slate-100"
-          >
-            <span class="font-medium">{{ t("common.error") }}:</span>
-            {{ trainingStore.error.message }}
+          <!-- If logged in but not admin -->
+          <div v-if="!canSeeAdmin" class="app-card p-3 text-xs opacity-80">
+            {{ t("admin.panel.noAccess") ?? "Brak dostępu do panelu administratora." }}
           </div>
         </template>
 
@@ -99,7 +112,7 @@
 
                 <div v-if="canSeeAdmin" class="flex items-center justify-between">
                   <RouterLink class="app-link" to="/admin/users">
-                    {{ t("admin.panel.open") }}
+                    {{ t("admin.panel.open") ?? "Panel administratora" }}
                   </RouterLink>
                 </div>
               </div>
@@ -132,27 +145,23 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import { RouterLink, useRouter, useRoute } from "vue-router";
+import { computed, onMounted, ref, watch } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 
 import BaseLogo from "../ui/BaseLogo.vue";
 import BaseDropdown from "../ui/BaseDropdown.vue";
 
-import { useTrainingStore } from "../../features/training/stores/trainingStore";
 import { useTheme } from "../composables/useTheme";
 import { useLocale } from "../composables/useLocale";
 import { useI18n } from "../composables/useI18n";
 import { useAuthStore } from "../../features/auth/stores/authStore";
 import { useUiStore } from "../stores/uiStore";
 
-import { getTrainingTypeMeta } from "../../features/training/utils/trainingTypeMeta";
-import {AdminService} from "../../features/admin/services/AdminService.ts";
+import { AdminService } from "../../features/admin/services/AdminService";
 
 const auth = useAuthStore();
 const ui = useUiStore();
-const trainingStore = useTrainingStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -167,9 +176,21 @@ const userName = computed(() =>
 
 const canSeeAdmin = ref(false);
 
+function isActive(path: string) {
+  // /admin/users/123
+  return route.path === path || route.path.startsWith(path + "/");
+}
+
 async function refreshAdminAccess() {
   if (!auth.isLoggedIn) {
     canSeeAdmin.value = false;
+    return;
+  }
+
+  // szybki check lokalny roles/is_admin
+  const u: any = auth.currentUser;
+  if (u?.is_admin === true || (Array.isArray(u?.roles) && u.roles.includes("admin"))) {
+    canSeeAdmin.value = true;
     return;
   }
 
@@ -177,17 +198,9 @@ async function refreshAdminAccess() {
     canSeeAdmin.value = await AdminService.canAccessAdmin();
   } catch (e: any) {
     const status = e?.response?.status ?? e?.status ?? 0;
-
-    if (status === 403 || status === 401 || status === 419) {
-      canSeeAdmin.value = false;
-      return;
-    }
-
-    console.error("Admin access check failed:", e);
-    canSeeAdmin.value = false;
+    canSeeAdmin.value = !(status === 403 || status === 401 || status === 419) ? false : false;
   }
 }
-
 
 onMounted(refreshAdminAccess);
 
@@ -197,48 +210,14 @@ watch(
     { immediate: true }
 );
 
-
-function trainingMeta(type: string) {
-  return getTrainingTypeMeta(type);
-}
-
-async function ensureTrainingsLoaded() {
-  if (!auth.isLoggedIn) return;
-  if (trainingStore.items.length) return;
-  await trainingStore.fetchList();
-}
-
-function goCreate() {
-  trainingStore.setMode("create");
-  trainingStore.selectById(null);
-  router.push("/trainings");
-}
-
-async function openTraining(id: number) {
-  trainingStore.setMode("details");
-  trainingStore.selectById(id);
-
-  if (route.path !== "/trainings") {
-    await router.push("/trainings");
-  }
-
-  await trainingStore.fetchDetails(id);
-}
+watch(
+    () => auth.currentUser,
+    () => refreshAdminAccess(),
+    { deep: true }
+);
 
 async function onLogout() {
   await auth.logout();
-  trainingStore.reset();
   await router.push("/login");
 }
-
-onMounted(ensureTrainingsLoaded);
-
-watch(
-    () => auth.isLoggedIn,
-    async (loggedIn) => {
-      if (!loggedIn) return;
-      await ensureTrainingsLoaded();
-    },
-    { immediate: true }
-);
 </script>
