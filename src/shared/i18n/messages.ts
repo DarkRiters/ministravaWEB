@@ -163,6 +163,7 @@ export const messages = {
         "auth.login.submit": "Zaloguj się",
         "auth.login.noAccount": "Nie masz konta?",
         "auth.login.goToRegister": "Załóż konto",
+        "auth.errors.invalidCredentials": "Nieprawidłowe dane uwierzytelniające",
 
         // =====================
         // AUTH – REGISTER
@@ -195,6 +196,20 @@ export const messages = {
         "auth.reset.error": "Nie udało się zresetować hasła.",
         "auth.reset.backToLogin": "Wróć do logowania",
         "auth.reset.missingToken": "Link resetu hasła jest nieprawidłowy lub wygasł.",
+        // =====================
+        // AUTH – VERIFY EMAIL (NEW)
+        // =====================
+        "auth.verify.title": "Weryfikacja email",
+        "auth.verify.loading": "Weryfikuję link...",
+        "auth.verify.success.title": "Email został potwierdzony.",
+        "auth.verify.success.subtitle": "Możesz się teraz zalogować.",
+        "auth.verify.expired.title": "Link wygasł.",
+        "auth.verify.expired.subtitle": "Poproś o ponowne wysłanie linku weryfikacyjnego.",
+        "auth.verify.error.title": "Nie udało się zweryfikować emaila.",
+        "auth.verify.error.missingParams": "Brakuje parametrów linku weryfikacyjnego.",
+        "auth.verify.actions.goLogin": "Przejdź do logowania",
+        "auth.verify.actions.retry": "Spróbuj ponownie",
+        "auth.verify.hint": "Jeśli otworzyłeś link dawno temu lub był przeklejany, mógł utracić ważność.",
 
 
         // =====================
@@ -599,6 +614,7 @@ export const messages = {
         "auth.login.submit": "Sign in",
         "auth.login.noAccount": "Don't have an account?",
         "auth.login.goToRegister": "Create one",
+        "auth.errors.invalidCredentials": "Invalid credentials",
 
         // =====================
         // AUTH – REGISTER
@@ -631,6 +647,20 @@ export const messages = {
         "auth.reset.error": "Could not reset password.",
         "auth.reset.backToLogin": "Back to login",
         "auth.reset.missingToken": "Password reset link is invalid or has expired.",
+        // =====================
+        // AUTH – VERIFY EMAIL (NEW)
+        // =====================
+        "auth.verify.title": "Email verification",
+        "auth.verify.loading": "Verifying link...",
+        "auth.verify.success.title": "Email has been verified.",
+        "auth.verify.success.subtitle": "You can now sign in.",
+        "auth.verify.expired.title": "Link has expired.",
+        "auth.verify.expired.subtitle": "Request a new verification link.",
+        "auth.verify.error.title": "Could not verify email.",
+        "auth.verify.error.missingParams": "Missing verification link parameters.",
+        "auth.verify.actions.goLogin": "Go to login",
+        "auth.verify.actions.retry": "Try again",
+        "auth.verify.hint": "If you opened the link long ago or copied it around, it may no longer be valid.",
 
 
 

@@ -30,6 +30,12 @@ const routes: RouteRecordRaw[] = [
         meta: { guestOnly: true } satisfies AppRouteMeta,
     },
     {
+        path: "/verify-email",
+        name: "verify-email",
+        component: () => import("../../features/auth/views/VerifyEmailView.vue"),
+        meta: { guestOnly: true } satisfies AppRouteMeta,
+    },
+    {
         path: "/register",
         name: "register",
         component: RegisterView,

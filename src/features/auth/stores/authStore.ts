@@ -82,6 +82,23 @@ export const useAuthStore = defineStore("auth", () => {
             throw err;
         }
     }
+    function getLoginErrorKey(err: unknown): string {
+        const e = err as any;
+
+        const status = e?.response?.status ?? e?.status ?? 0;
+        const message = String(e?.response?.data?.message ?? e?.message ?? "").toLowerCase();
+
+        if (status === 401) return "auth.errors.invalidCredentials";
+
+        if (status === 422 && (message.includes("credentials") || message.includes("incorrect") || message.includes("invalid"))) {
+            return "auth.errors.invalidCredentials";
+        }
+
+        if (status === 419) return "auth.errors.sessionExpired";
+
+        return "auth.errors.loginFailed";
+    }
+
 
     async function updateProfile(payload: { name?: string; email?: string }) {
         const token = getAuthToken();
@@ -144,6 +161,7 @@ export const useAuthStore = defineStore("auth", () => {
         changePassword,
 
         logout,
+        getLoginErrorKey,
     };
 });
 

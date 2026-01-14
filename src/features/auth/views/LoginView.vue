@@ -67,13 +67,24 @@ const emailError = ref<MessageKey | null>(null);
 const passwordError = ref<MessageKey | null>(null);
 
 async function onSubmit() {
+  emailError.value = null;
+  passwordError.value = null;
+
   emailError.value = validateEmail(email.value) ?? null;
   passwordError.value = validatePassword(password.value) ?? null;
 
   if (emailError.value || passwordError.value) return;
 
-  await auth.login(email.value, password.value);
+  try {
+    await auth.login(email.value, password.value);
+    await router.push("/");
+  } catch (err: any) {
+    const key = (auth as any).getLoginErrorKey
+        ? (auth as any).getLoginErrorKey(err)
+        : t("auth.errors.invalidCredentials");
 
-  await router.push("/");
+    passwordError.value = key as any;
+  }
 }
+
 </script>
