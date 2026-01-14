@@ -24,6 +24,14 @@
           <div class="opacity-80 mt-1">{{ t("auth.verify.expired.subtitle") }}</div>
         </div>
 
+        <div
+            v-else-if="status === 'throttled'"
+            class="app-card p-4 border border-amber-500/30 bg-amber-500/5 text-sm"
+        >
+          <div class="font-medium">{{ t("auth.verify.throttled.title") }}</div>
+          <div class="opacity-80 mt-1">{{ t("auth.verify.throttled.subtitle") }}</div>
+        </div>
+
         <div v-else class="app-card p-4 border border-red-500/30 bg-red-500/5 text-sm">
           <div class="font-medium">{{ t("auth.verify.error.title") }}</div>
           <div class="opacity-80 mt-1">{{ errorMsg }}</div>
@@ -55,10 +63,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useRoute, RouterLink } from "vue-router";
-import { api } from "../../../shared/services/http/api";
 import { useI18n } from "../../../shared/composables/useI18n";
 
-type Status = "loading" | "success" | "error" | "expired";
+type Status = "loading" | "success" | "error" | "expired" | "throttled";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -66,45 +73,74 @@ const route = useRoute();
 const status = ref<Status>("loading");
 const errorMsg = ref<string>("");
 
-const id = computed(() => String(route.query.id ?? ""));
-const hash = computed(() => String(route.query.hash ?? ""));
-const expires = computed(() => String(route.query.expires ?? ""));
-const signature = computed(() => String(route.query.signature ?? ""));
+const token = computed(() => String(route.query.token ?? ""));
 
-function buildVerifyUrl(): string {
-  const qs = new URLSearchParams();
-  if (expires.value) qs.set("expires", expires.value);
-  if (signature.value) qs.set("signature", signature.value);
+function decodeToken(raw: string): string {
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
 
-  //
-  return `/email/verify/${encodeURIComponent(id.value)}/${encodeURIComponent(hash.value)}?${qs.toString()}`;
+function looksLikeAbsoluteUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
 }
 
 async function verify() {
   status.value = "loading";
   errorMsg.value = "";
 
-  if (!id.value || !hash.value || !expires.value || !signature.value) {
+  if (!token.value) {
     status.value = "error";
     errorMsg.value = t("auth.verify.error.missingParams");
     return;
   }
 
-  try {
-    await api.get(buildVerifyUrl(), { headers: { Accept: "application/json" } });
-    status.value = "success";
-  } catch (e: any) {
-    const code = e?.response?.status ?? 0;
-    const msg = e?.response?.data?.message ?? e?.message ?? "Verification error.";
+  const signedUrl = decodeToken(token.value);
 
-    if (code === 403) {
+  if (!looksLikeAbsoluteUrl(signedUrl)) {
+    status.value = "error";
+    errorMsg.value = t("auth.verify.error.invalidLink");
+    return;
+  }
+
+  try {
+    const res = await fetch(signedUrl, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
+
+    if (res.ok) {
+      status.value = "success";
+      return;
+    }
+
+    if (res.status === 429) {
+      status.value = "throttled";
+      return;
+    }
+
+    if (res.status === 403) {
       status.value = "expired";
-      errorMsg.value = msg;
+      try {
+        const data = await res.json();
+        errorMsg.value = String(data?.message ?? "");
+      } catch {
+      }
       return;
     }
 
     status.value = "error";
-    errorMsg.value = msg;
+    try {
+      const data = await res.json();
+      errorMsg.value = String(data?.message ?? "Verification error.");
+    } catch {
+      errorMsg.value = "Verification error.";
+    }
+  } catch (e: any) {
+    status.value = "error";
+    errorMsg.value = e?.message ?? "Verification error.";
   }
 }
 

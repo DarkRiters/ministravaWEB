@@ -210,6 +210,9 @@ export const messages = {
         "auth.verify.actions.goLogin": "Przejdź do logowania",
         "auth.verify.actions.retry": "Spróbuj ponownie",
         "auth.verify.hint": "Jeśli otworzyłeś link dawno temu lub był przeklejany, mógł utracić ważność.",
+        "auth.verify.throttled.title": "Za dużo prób.",
+        "auth.verify.throttled.subtitle": "Wykonałeś zbyt wiele prób w krótkim czasie. Spróbuj ponownie za chwilę.",
+        "auth.verify.error.invalidLink": "Nieprawidłowy link weryfikacyjny.",
 
 
         // =====================
@@ -661,6 +664,9 @@ export const messages = {
         "auth.verify.actions.goLogin": "Go to login",
         "auth.verify.actions.retry": "Try again",
         "auth.verify.hint": "If you opened the link long ago or copied it around, it may no longer be valid.",
+        "auth.verify.throttled.title": "Too many attempts.",
+        "auth.verify.throttled.subtitle": "You have made too many attempts in a short time. Please try again later.",
+        "auth.verify.error.invalidLink": "Invalid verification link.",
 
 
 

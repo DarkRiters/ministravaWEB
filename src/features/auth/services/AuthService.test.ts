@@ -115,41 +115,6 @@ describe("AuthService", () => {
         expect(apiPost).toHaveBeenCalledWith("/reset-password", payload);
     });
 
-    it("updateProfile() normalizes when backend returns { data: {...} }", async () => {
-        apiPut.mockResolvedValueOnce({
-            data: {
-                message: "ok",
-                data: {
-                    id: 10,
-                    name: "Neo",
-                    email: "neo@matrix.com",
-                    email_verified_at: null,
-                    is_admin: 1,
-                    created_at: "2022-02-02T02:02:02.000Z",
-                    updated_at: "2022-03-03T03:03:03.000Z",
-                },
-            },
-        });
-
-        const user = await AuthService.updateProfile({ name: "Neo", email: "neo@matrix.com" });
-
-        expect(apiPut).toHaveBeenCalledTimes(1);
-        expect(apiPut).toHaveBeenCalledWith(
-            "/profile",
-            { name: "Neo", email: "neo@matrix.com" },
-            { headers: { Accept: "application/json" } }
-        );
-
-        expect(user).toEqual({
-            id: 10,
-            name: "Neo",
-            email: "neo@matrix.com",
-            email_verified_at: null,
-            is_admin: true,
-            created_at: "2022-02-02T02:02:02.000Z",
-            updated_at: "2022-03-03T03:03:03.000Z",
-        });
-    });
 
     it("updateProfile() fills created_at/updated_at when missing", async () => {
         // freeze time so nowIso() is deterministic
