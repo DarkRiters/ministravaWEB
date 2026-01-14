@@ -45,6 +45,8 @@ export const messages = {
 
         "admin.activities.errors.fetch": "Nie udało się pobrać aktywności.",
         "admin.activities.errors.delete": "Nie udało się usunąć.",
+        "admin.activities.table.note": "Notatka",
+
 
         // =====================
         // ADMIN – STATS (NEW)
@@ -497,6 +499,7 @@ export const messages = {
 
         "admin.activities.errors.fetch": "Could not load activities.",
         "admin.activities.errors.delete": "Could not delete.",
+        "admin.activities.table.note": "Note",
 
         // =====================
         // ADMIN – STATS (NEW)

@@ -134,6 +134,7 @@
               <th class="py-2 pr-3">{{ t("admin.activities.table.id") }}</th>
               <th class="py-2 pr-3">{{ t("admin.activities.table.user") }}</th>
               <th class="py-2 pr-3">{{ t("admin.activities.table.name") }}</th>
+              <th class="py-2 pr-3">{{ t("admin.activities.table.note") }}</th>
               <th class="py-2 pr-3">{{ t("admin.activities.table.type") }}</th>
               <th class="py-2 pr-3">{{ t("admin.activities.table.distance") }}</th>
               <th class="py-2 pr-3">{{ t("admin.activities.table.time") }}</th>
@@ -158,6 +159,7 @@
               </td>
 
               <td class="py-2 pr-3">{{ a.name }}</td>
+              <td class="py-2 pr-3">{{ a.note }}</td>
               <td class="py-2 pr-3">{{ a.type }}</td>
               <td class="py-2 pr-3">{{ a.distance ?? 0 }}</td>
               <td class="py-2 pr-3">{{ a.time ?? 0 }}</td>
