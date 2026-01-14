@@ -14,8 +14,7 @@ type AppRouteMeta = {
 };
 
 const routes: RouteRecordRaw[] = [
-    // ROOT -> admin by default (bo projekt to panel admina)
-    { path: "/", redirect: "/admin/stats" },
+    { path: "/", name: "root", redirect: "/profile" },
 
     {
         path: "/reset-password",
@@ -47,12 +46,14 @@ const routes: RouteRecordRaw[] = [
         component: ForgotPasswordView,
         meta: { guestOnly: true } satisfies AppRouteMeta,
     },
+
     {
         path: "/profile",
         name: "profile",
         component: ProfileView,
         meta: { requiresAuth: true } satisfies AppRouteMeta,
     },
+
     {
         path: "/admin/stats",
         name: "admin-stats",
@@ -72,7 +73,7 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true, requiresAdmin: true } satisfies AppRouteMeta,
     },
 
-    { path: "/:pathMatch(.*)*", redirect: "/admin/users" },
+    { path: "/:pathMatch(.*)*", redirect: "/profile" },
 ];
 
 export const router = createRouter({
@@ -85,6 +86,30 @@ function userIsAdmin(currentUser: unknown): boolean {
     return u?.is_admin === true || (Array.isArray(u?.roles) && u.roles.includes("admin"));
 }
 
+let lastAdminCheckAt = 0;
+let lastAdminCheckResult: boolean | null = null;
+const ADMIN_CHECK_COOLDOWN_MS = 60_000;
+
+async function canAccessAdminCached(): Promise<boolean> {
+    const now = Date.now();
+
+    if (lastAdminCheckResult !== null && now - lastAdminCheckAt < ADMIN_CHECK_COOLDOWN_MS) {
+        return lastAdminCheckResult;
+    }
+
+    lastAdminCheckAt = now;
+
+    try {
+        const { AdminService } = await import("../../features/admin/services/AdminService");
+        const ok = await AdminService.canAccessAdmin();
+        lastAdminCheckResult = ok;
+        return ok;
+    } catch {
+        lastAdminCheckResult = false;
+        return false;
+    }
+}
+
 router.beforeEach(async (to) => {
     const auth = useAuthStore();
     const meta = (to.meta ?? {}) as AppRouteMeta;
@@ -93,8 +118,30 @@ router.beforeEach(async (to) => {
     const guestOnly = Boolean(meta.guestOnly);
     const requiresAdmin = Boolean(meta.requiresAdmin);
 
+    if (to.name === "root") {
+        if (!auth.isLoggedIn) return { name: "login" };
+        if (!auth.currentUser) {
+            try {
+                await auth.refreshMe();
+            } catch {
+                return { name: "login" };
+            }
+        }
+        return userIsAdmin(auth.currentUser) ? { name: "admin-users" } : { name: "profile" };
+    }
+
     if (requiresAuth && !auth.isLoggedIn) return { name: "login" };
-    if (guestOnly && auth.isLoggedIn) return { name: "admin-users" };
+
+    if (guestOnly && auth.isLoggedIn) {
+        if (!auth.currentUser) {
+            try {
+                await auth.refreshMe();
+            } catch {
+                return { name: "login" };
+            }
+        }
+        return userIsAdmin(auth.currentUser) ? { name: "admin-users" } : { name: "profile" };
+    }
 
     if (requiresAuth && auth.isLoggedIn && !auth.currentUser) {
         try {
@@ -105,16 +152,12 @@ router.beforeEach(async (to) => {
     }
 
     if (requiresAdmin) {
+        if (!auth.isLoggedIn) return { name: "login" };
         if (userIsAdmin(auth.currentUser)) return true;
+        const ok = await canAccessAdminCached();
 
-        try {
-            const { AdminService } = await import("../../features/admin/services/AdminService");
-            const ok = await AdminService.canAccessAdmin();
-            if (!ok) return { name: "login" };
-            return true;
-        } catch {
-            return { name: "login" };
-        }
+        if (!ok) return { name: "profile" };
+        return true;
     }
 
     return true;

@@ -170,44 +170,94 @@ const userName = computed(() =>
 
 const canSeeAdmin = ref(false);
 
+// ---- anti-loop / anti-spam state
+const isCheckingAdmin = ref(false);
+let hasCheckedRemoteForUserKey: string | null = null;
+let lastRemoteResult: boolean | null = null;
+
 function isActive(path: string) {
-  // /admin/users/123
   return route.path === path || route.path.startsWith(path + "/");
 }
 
-async function refreshAdminAccess() {
+function localAdminHint(): boolean {
+  const u: any = auth.currentUser;
+  return u?.is_admin === true || (Array.isArray(u?.roles) && u.roles.includes("admin"));
+}
+
+function currentUserKey(): string | null {
+  const u: any = auth.currentUser;
+  if (!u?.id) return null;
+
+  return String(u.id);
+}
+
+async function refreshAdminAccess({ forceRemote = false }: { forceRemote?: boolean } = {}) {
   if (!auth.isLoggedIn) {
+    canSeeAdmin.value = false;
+    isCheckingAdmin.value = false;
+    hasCheckedRemoteForUserKey = null;
+    lastRemoteResult = null;
+    return;
+  }
+
+  if (localAdminHint()) {
+    canSeeAdmin.value = true;
+    lastRemoteResult = true;
+    return;
+  }
+
+  const key = currentUserKey();
+  if (!forceRemote && key && hasCheckedRemoteForUserKey === key && lastRemoteResult === false) {
     canSeeAdmin.value = false;
     return;
   }
 
-  // szybki check lokalny roles/is_admin
-  const u: any = auth.currentUser;
-  if (u?.is_admin === true || (Array.isArray(u?.roles) && u.roles.includes("admin"))) {
-    canSeeAdmin.value = true;
+  if (isCheckingAdmin.value) return;
+
+  if (!key) {
+    canSeeAdmin.value = false;
     return;
   }
 
+  isCheckingAdmin.value = true;
+  hasCheckedRemoteForUserKey = key;
+
   try {
-    canSeeAdmin.value = await AdminService.canAccessAdmin();
+    const ok = await AdminService.canAccessAdmin();
+    canSeeAdmin.value = ok;
+    lastRemoteResult = ok;
   } catch (e: any) {
-    const status = e?.response?.status ?? e?.status ?? 0;
-    canSeeAdmin.value = !(status === 403 || status === 401 || status === 419) ? false : false;
+    canSeeAdmin.value = false;
+    lastRemoteResult = false;
+  } finally {
+    isCheckingAdmin.value = false;
   }
 }
 
-onMounted(refreshAdminAccess);
+onMounted(() => {
+  refreshAdminAccess({ forceRemote: true });
+});
 
 watch(
     () => auth.isLoggedIn,
-    () => refreshAdminAccess(),
-    { immediate: true }
+    (loggedIn) => {
+      if (!loggedIn) {
+        canSeeAdmin.value = false;
+        hasCheckedRemoteForUserKey = null;
+        lastRemoteResult = null;
+        return;
+      }
+      refreshAdminAccess({ forceRemote: true });
+    }
 );
 
 watch(
-    () => auth.currentUser,
-    () => refreshAdminAccess(),
-    { deep: true }
+    () => (auth.currentUser as any)?.id,
+    () => {
+      hasCheckedRemoteForUserKey = null;
+      lastRemoteResult = null;
+      refreshAdminAccess({ forceRemote: true });
+    }
 );
 
 async function onLogout() {
